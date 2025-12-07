@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webcam360 - دوربین آنلاین</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f1f5f9;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .hero {
+            text-align: center;
+            padding: 60px 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, #60a5fa, #8b5cf6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .tagline {
+            font-size: 1.3rem;
+            color: #cbd5e1;
+            margin-bottom: 40px;
+        }
+        
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 50px auto;
+            max-width: 1000px;
+        }
+        
+        .card {
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            border: 1px solid #334155;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: #60a5fa;
+        }
+        
+        .card-icon {
+            font-size: 60px;
+            margin-bottom: 25px;
+        }
+        
+        .card-title {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: #60a5fa;
+        }
+        
+        .card-desc {
+            color: #94a3b8;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 15px 35px;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4);
+        }
+        
+        .btn-phone {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        
+        .features {
+            max-width: 800px;
+            margin: 60px auto;
+            padding: 40px;
+            background: rgba(30, 41, 59, 0.6);
+            border-radius: 20px;
+            border: 1px solid #475569;
+        }
+        
+        .features h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #8b5cf6;
+        }
+        
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 10px;
+        }
+        
+        .feature-icon {
+            color: #4ade80;
+            font-size: 24px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: #64748b;
+            margin-top: 60px;
+            border-top: 1px solid #334155;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero {
+                padding: 40px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <h1>🌐 Webcam360</h1>
+        <p class="tagline">دوربین آنلاین شخصی شما - امن، سریع و رایگان</p>
+    </div>
+    
+    <div class="cards">
+        <div class="card">
+            <div class="card-icon">📱</div>
+            <h3 class="card-title">گوشی شما به عنوان دوربین</h3>
+            <p class="card-desc">
+                گوشی خود را به یک دوربین تحت وب تبدیل کنید.
+                فقط چرخ‌دنده نمایش داده می‌شود و تصویر مخفی باقی می‌ماند.
+            </p>
+            <a href="/phone" class="btn btn-phone" target="_blank">
+                📷 صفحه دوربین
+            </a>
+        </div>
+        
+        <div class="card">
+            <div class="card-icon">🖥️</div>
+            <h3 class="card-title">پنل کنترل روی کامپیوتر</h3>
+            <p class="card-desc">
+                تصویر زنده دوربین گوشی را روی کامپیوتر خود مشاهده کنید.
+                امکان ضبط، عکس‌برداری و کنترل کامل.
+            </p>
+            <a href="/computer" class="btn" target="_blank">
+                🎮 پنل کنترل
+            </a>
+        </div>
+    </div>
+    
+    <div class="features">
+        <h2>✨ ویژگی‌ها</h2>
+        <div class="feature-list">
+            <div class="feature-item">
+                <span class="feature-icon">🔒</span>
+                <span>اتصال مستقیم و امن (P2P)</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">⚡</span>
+                <span>سرعت بالا با تاخیر کم</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">🎯</span>
+                <span>کیفیت تصویر قابل تنظیم</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">🛡️</span>
+                <span>بدون ذخیره‌سازی در سرور</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">📸</span>
+                <span>امکان عکس‌برداری و ذخیره</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">🌍</span>
+                <span>کاربری در هر شبکه‌ای</span>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>© 2024 Webcam360 - سرویس دوربین آنلاین شخصی</p>
+        <p style="margin-top: 10px; font-size: 0.9rem;">
+            تمامی ارتباطات به صورت مستقیم بین دستگاه‌ها برقرار می‌شود.
+        </p>
+    </footer>
+</body>
+</html>
